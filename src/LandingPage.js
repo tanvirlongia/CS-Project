@@ -14,7 +14,6 @@ const LandingPage = () => {
     const [actorPopup, setActorPopup] = useState(false);
     const [actorDetailsPopup, setActorDetailsPopup] = useState(false);
     const [actorDetails, setActorDetails] = useState(null);
-
     const [filmFetchError, setFilmFetchError] = useState('');
     const [actorFetchError, setActorFetchError] = useState('');
     const [actorMoviesFetchError, setActorMoviesFetchError] = useState('');
@@ -282,3 +281,6 @@ const buttonStyle = {
 };
 
 export default LandingPage;
+
+
+

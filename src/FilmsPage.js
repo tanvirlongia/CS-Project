@@ -10,6 +10,9 @@ const FilmsPage = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [currentFilm, setCurrentFilm] = useState(null);
     const [detailsError, setDetailsError] = useState('');
+    const [customerId, setCustomerId] = useState('');
+    const [rentError, setRentError] = useState('');
+    const [rentSuccess, setRentSuccess] = useState('');
 
     const search = async () => {
         try {
@@ -25,6 +28,25 @@ const FilmsPage = () => {
         setCurrentFilm(film);
         setIsPopupOpen(true);
         setDetailsError('');
+    };
+
+    const rentFilm = async (filmId) => {
+        if (!customerId) {
+            setRentError('Please enter a customer ID.');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`http://localhost:5000/rent-film`, {
+                film_id: filmId,
+                customer_id: customerId,
+            });
+            setRentSuccess(response.data.message);
+            setRentError('');
+        } catch (err) {
+            setRentError('Failed to rent the film. Please try again.');
+            setRentSuccess('');
+        }
     };
 
     return (
@@ -87,6 +109,23 @@ const FilmsPage = () => {
                                         >
                                             View Details
                                         </button>
+                                        {filterType === 'title' && (
+                                            <>
+                                                <input 
+                                                    type="text" 
+                                                    value={customerId} 
+                                                    onChange={(e) => setCustomerId(e.target.value)} 
+                                                    placeholder="Customer ID" 
+                                                    style={{ padding: '5px', marginLeft: '10px' }}
+                                                />
+                                                <button 
+                                                    onClick={() => rentFilm(film.film_id)} 
+                                                    style={buttonStyle}
+                                                >
+                                                    Rent Film
+                                                </button>
+                                            </>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -106,19 +145,14 @@ const FilmsPage = () => {
                         <p><strong>Title:</strong> {currentFilm.title}</p>
                         <p><strong>Description:</strong> {currentFilm.description}</p>
                         <p><strong>Film ID:</strong> {currentFilm.film_id}</p>
-                        <p><strong>Language ID:</strong> {currentFilm.language_id}</p>
-                        <p><strong>Original Language ID:</strong> {currentFilm.original_language_id || 'N/A'}</p>
-                        <p><strong>Release Year:</strong> {currentFilm.release_year}</p>
-                        <p><strong>Rental Duration (days):</strong> {currentFilm.rental_duration}</p>
-                        <p><strong>Rental Rate:</strong> ${currentFilm.rental_rate}</p>
-                        <p><strong>Length (minutes):</strong> {currentFilm.length}</p>
-                        <p><strong>Replacement Cost:</strong> ${currentFilm.replacement_cost}</p>
-                        <p><strong>Rating:</strong> {currentFilm.rating}</p>
-                        <p><strong>Special Features:</strong> {currentFilm.special_features}</p>
-                        <p><strong>Last Update:</strong> {new Date(currentFilm.last_update).toLocaleString()}</p>
+
+                        <p><strong>Available Copies:</strong> {currentFilm.available_copies}</p>
                     </div>
                 )}
             </Popup>
+
+            {rentError && <p style={{ color: 'red' }}>{rentError}</p>}
+            {rentSuccess && <p style={{ color: 'green' }}>{rentSuccess}</p>}
         </div>
     );
 };
@@ -132,23 +166,22 @@ const headerStyle = {
 };
 
 const rowStyle = {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#f9f9f9',
     borderBottom: '1px solid #ddd'
 };
 
 const cellStyle = {
     padding: '10px',
-    textAlign: 'left'
+    border: '1px solid #ddd'
 };
 
 const buttonStyle = {
-    padding: '10px 15px',
-    marginLeft: '10px',
-    backgroundColor: '#3448ad',
+    backgroundColor: '#007bff',
     color: 'white',
+    padding: '10px 15px',
     border: 'none',
-    cursor: 'pointer',
     borderRadius: '5px',
+    cursor: 'pointer'
 };
 
 export default FilmsPage;
