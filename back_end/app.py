@@ -401,6 +401,8 @@ def delete_customer(customer_id):
             return jsonify({"error": "Customer not found"}), 404
 
         cursor.execute("DELETE FROM payment WHERE customer_id = %s", (customer_id,))
+
+        cursor.execute("DELETE FROM rental WHERE customer_id = %s", (customer_id,))
         
         cursor.execute("DELETE FROM customer WHERE customer_id = %s", (customer_id,))
         conn.commit()
