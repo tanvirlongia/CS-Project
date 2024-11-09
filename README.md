@@ -1,4 +1,4 @@
-# CS-490-Individual-Project
+# Sakila database Project
 
 Back end: flask 
 
